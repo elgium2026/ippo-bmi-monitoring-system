@@ -16,24 +16,24 @@ This workspace contains a full-stack BMI monitoring system for Ifugao PPO person
      python -m venv venv
      .\venv\Scripts\Activate.ps1
      ```
-3. Install dependencies:
+3. Upgrade pip and install dependencies:
    ```powershell
-   pip install -r requirements-dev.txt
+   python -m pip install --upgrade pip
+   python -m pip install -r requirements-dev.txt
    ```
 4. Create database tables:
    ```powershell
    python manage.py makemigrations
    python manage.py migrate
    ```
-
-> If you are using Windows for local development, install `requirements-dev.txt` instead of `requirements.txt`.
-> `requirements.txt` includes `gunicorn`, which is only needed for deployment in Linux/Docker.
 5. Start the Django server:
    ```powershell
    python manage.py runserver
    ```
 
 The API is available at `http://localhost:8000/api/`.
+
+> Note: `requirements-dev.txt` is recommended for local Windows development. `requirements.txt` includes `gunicorn` and is intended for deployment in Docker or Linux environments.
 
 ### Default Admin Account
 
@@ -44,12 +44,14 @@ After the first admin login, the app requires a password change.
 
 ## Frontend Setup
 
-1. Open a terminal in `frontend/`
-2. Install dependencies:
+1. Install Node.js and npm if you do not already have them installed.
+   - Download from https://nodejs.org/
+2. Open a terminal in `frontend/`
+3. Install dependencies:
    ```powershell
    npm install
    ```
-3. Start the development server:
+4. Start the development server:
    ```powershell
    npm run dev
    ```
@@ -73,10 +75,13 @@ The frontend will typically run at `http://localhost:5173`.
 
 ## Render Deployment
 
-This repo includes `render.yaml` for Render deployment. It defines two services:
+This repo includes `render.yaml` for Render deployment. It currently defines the backend service only.
 
-- `Ifugao BMI Backend` as a Python web service using `backend/`
-- `Ifugao BMI Frontend` as a static site using `frontend/`
+- `Ifugao BMI Backend` as a Docker web service using `backend/Dockerfile`
+
+### Frontend deployment on Render
+
+The frontend must be deployed separately as a Render Static Site.
 
 ### Render Environment Variables
 
@@ -85,10 +90,12 @@ This repo includes `render.yaml` for Render deployment. It defines two services:
 
 ### Deploy steps on Render
 
-1. Create a new Render service for the backend using the repo and Python environment.
-2. Create a second Render service for the frontend as a static site.
+1. Deploy the backend service from `render.yaml`.
+2. Create a Render Static Site for the frontend using the same repo.
 3. In the frontend service settings, set `VITE_API_URL` to the backend service URL + `/api`.
-4. Deploy both services.
+4. Deploy the frontend as a separate static site.
+
+> Note: The Render blueprint only supports the backend service; the frontend is deployed manually as a static site.
 
 ## Local Docker Compose
 
