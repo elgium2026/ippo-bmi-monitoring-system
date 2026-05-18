@@ -1,10 +1,46 @@
 services:
   - type: web
+    name: Ifugao BMI Frontend
+    env: docker
+    dockerfilePath: frontend/Dockerfile
+    branch: main
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: Ifugao BMI Backend
+          type: web
+          property: url
+        path: /api
+
+  - type: web
     name: Ifugao BMI Backend
     env: docker
     dockerfilePath: backend/Dockerfile
     branch: main
     plan: free
+    startCommand: "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn bmi_monitor.wsgi:application --bind 0.0.0.0:$PORT"
+    healthCheckPath: /api/admin/login/
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: bmi_monitor.settings
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ifugao-bmi-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        value: "*.onrender.com,localhost,127.0.0.1"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "*"
+
+databases:
+  - name: ifugao-bmi-db
+    plan: free
+    databaseName: ifugao_bmi_prod
+    user: ifugao_bmi_user
+    region: singapore
