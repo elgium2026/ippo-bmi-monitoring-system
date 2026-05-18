@@ -12,21 +12,28 @@ This workspace contains a full-stack BMI monitoring system for Ifugao PPO person
 1. Open a terminal in `backend/`
 2. Create and activate a virtual environment:
    - Windows PowerShell:
+
      ```powershell
      python -m venv venv
      .\venv\Scripts\Activate.ps1
      ```
+
 3. Upgrade pip and install dependencies:
+
    ```powershell
    python -m pip install --upgrade pip
    python -m pip install -r requirements-dev.txt
    ```
+
 4. Create database tables:
+
    ```powershell
    python manage.py makemigrations
    python manage.py migrate
    ```
+
 5. Start the Django server:
+
    ```powershell
    python manage.py runserver
    ```
@@ -45,13 +52,16 @@ After the first admin login, the app requires a password change.
 ## Frontend Setup
 
 1. Install Node.js and npm if you do not already have them installed.
-   - Download from https://nodejs.org/
+   - Download from [https://nodejs.org](https://nodejs.org)
 2. Open a terminal in `frontend/`
 3. Install dependencies:
+
    ```powershell
    npm install
    ```
+
 4. Start the development server:
+
    ```powershell
    npm run dev
    ```
@@ -108,4 +118,4 @@ docker-compose up --build
 - Backend will be available at `http://localhost:8000`
 - Frontend will be available at `http://localhost:5173`
 
-The frontend build uses `VITE_API_URL=http://backend:8000/api` in local compose setup.
+The frontend build uses `VITE_API_URL=<http://backend:8000/api>` in local compose setup.
