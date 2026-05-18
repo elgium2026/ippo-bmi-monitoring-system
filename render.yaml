@@ -1,7 +1,7 @@
 services:
-  - type: web_service
+  - type: web
     name: Ifugao BMI Backend
-    env: python
+    runtime: python-3.11
     branch: main
     plan: free
     buildCommand: pip install -r requirements.txt
@@ -9,7 +9,7 @@ services:
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: bmi_monitor.settings
-  - type: static_site
+  - type: static
     name: Ifugao BMI Frontend
     branch: main
     plan: free
