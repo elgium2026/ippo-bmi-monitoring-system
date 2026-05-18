@@ -1,6 +1,7 @@
 services:
   - type: web
     name: Ifugao BMI Backend
+    env: docker
     dockerfilePath: backend/Dockerfile
     branch: main
     plan: free
