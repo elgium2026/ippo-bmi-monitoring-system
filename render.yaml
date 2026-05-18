@@ -9,12 +9,3 @@ services:
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: bmi_monitor.settings
-  - type: static
-    name: Ifugao BMI Frontend
-    branch: main
-    plan: free
-    buildCommand: cd frontend && npm install && npm run build
-    publishPath: frontend/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://YOUR_BACKEND_SERVICE.onrender.com/api
