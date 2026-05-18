@@ -80,7 +80,7 @@ In Render dashboard:
 python create_admin.py
 ```
 
-4. Follow prompts to create admin account
+Then follow prompts to create an admin account
 
 ### Option B: Via Management Command
 
@@ -124,12 +124,12 @@ python manage.py createsuperuser
 
 ### Common Issues
 
-| Issue                           | Solution                                                       |
-| ------------------------------- | -------------------------------------------------------------- |
-| Frontend can't reach backend    | Check CORS_ALLOWED_ORIGINS and backend URL                    |
-| 500 errors on backend           | Check backend logs for migration or database errors           |
-| Database connection errors      | Verify DATABASE_URL env var is set correctly                  |
-| Admin login fails               | Check admin account exists: `python manage.py shell` → `CustomUser.objects.filter(is_staff=True).first()` |
+| Issue | Solution |
+| --- | --- |
+| Frontend can't reach backend | Check CORS_ALLOWED_ORIGINS and backend URL |
+| 500 errors on backend | Check backend logs for migration or database errors |
+| Database connection errors | Verify DATABASE_URL env var is set correctly |
+| Admin login fails | Check admin account exists: `python manage.py shell` → `CustomUser.objects.filter(is_staff=True).first()` |
 
 ## 📊 Environment Variables Reference
 
