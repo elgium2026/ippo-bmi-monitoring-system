@@ -128,7 +128,7 @@ Visit: `http://localhost:5173` → backend at `http://localhost:8000`
 
 ## Key Architecture
 
-```
+```text
 ┌─────────────────────┐
 │  Browser/User       │
 └──────────┬──────────┘

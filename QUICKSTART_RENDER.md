@@ -11,7 +11,7 @@ git push origin main
 
 ## 2️⃣ Go to Render Dashboard
 
-Visit: https://dashboard.render.com
+Visit: <https://dashboard.render.com>
 
 1. Click **"New +"** → **"Blueprint"**
 2. Connect your Git repository (authorize if needed)
@@ -22,7 +22,7 @@ Visit: https://dashboard.render.com
 
 Render will show you the services it will create:
 
-```
+```text
 ✓ Ifugao BMI Frontend (Nginx React app)
 ✓ Ifugao BMI Backend (Django API + Gunicorn)
 ✓ ifugao-bmi-db (PostgreSQL)
@@ -46,25 +46,25 @@ Once all three services show "Live":
 
 1. **Backend Health Check**
 
-```
-GET https://<your-backend>.onrender.com/api/admin/login/
-```
+   ```http
+   GET https://<your-backend>.onrender.com/api/admin/login/
+   ```
 
-Should return `405 Method Not Allowed` (POST only) - this is OK!
+   Should return `405 Method Not Allowed` (POST only) - this is OK!
 
 2. **Frontend Loads**
 
-```
-https://<your-frontend>.onrender.com
-```
+   ```url
+   https://<your-frontend>.onrender.com
+   ```
 
-Should show login page
+   Should show login page
 
 3. **Check Logs** for any errors:
 
-- Backend: Look for migration errors
-- Frontend: Look for build or startup errors
-- Database: Connection errors
+   - Backend: Look for migration errors
+   - Frontend: Look for build or startup errors
+   - Database: Connection errors
 
 ## 6️⃣ Create Admin Account
 
@@ -124,12 +124,12 @@ python manage.py createsuperuser
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| Frontend can't reach backend | Check CORS_ALLOWED_ORIGINS and backend URL |
-| 500 errors on backend | Check backend logs for migration or database errors |
-| Database connection errors | Verify DATABASE_URL env var is set correctly |
-| Admin login fails | Check admin account exists: `python manage.py shell` → `CustomUser.objects.filter(is_staff=True).first()` |
+| Issue                           | Solution                                                       |
+| ------------------------------- | -------------------------------------------------------------- |
+| Frontend can't reach backend    | Check CORS_ALLOWED_ORIGINS and backend URL                    |
+| 500 errors on backend           | Check backend logs for migration or database errors           |
+| Database connection errors      | Verify DATABASE_URL env var is set correctly                  |
+| Admin login fails               | Check admin account exists: `python manage.py shell` → `CustomUser.objects.filter(is_staff=True).first()` |
 
 ## 📊 Environment Variables Reference
 
