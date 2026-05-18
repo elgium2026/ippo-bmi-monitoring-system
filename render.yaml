@@ -1,7 +1,7 @@
 services:
   - type: web
     name: Ifugao BMI Backend
-    runtime: python-3.11
+    rootDir: backend
     branch: main
     plan: free
     buildCommand: pip install -r requirements.txt
