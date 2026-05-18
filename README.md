@@ -18,13 +18,16 @@ This workspace contains a full-stack BMI monitoring system for Ifugao PPO person
      ```
 3. Install dependencies:
    ```powershell
-   pip install -r requirements.txt
+   pip install -r requirements-dev.txt
    ```
 4. Create database tables:
    ```powershell
    python manage.py makemigrations
    python manage.py migrate
    ```
+
+> If you are using Windows for local development, install `requirements-dev.txt` instead of `requirements.txt`.
+> `requirements.txt` includes `gunicorn`, which is only needed for deployment in Linux/Docker.
 5. Start the Django server:
    ```powershell
    python manage.py runserver
