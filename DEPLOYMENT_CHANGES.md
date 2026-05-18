@@ -2,61 +2,69 @@
 
 ## Files Modified
 
-### 1. **render.yaml** (Complete rewrite)
-   - Added Frontend service (React/Nginx) on separate URL
-   - Added PostgreSQL database service (`ifugao-bmi-db`)
-   - Backend now includes:
-     - `startCommand` with migrations and collectstatic
-     - Health check path
-     - Environment variables for production
-   - Frontend uses `fromService` reference to automatically link to backend URL
-   - All services set to `plan: free` for Render's free tier
+### 1. render.yaml (Complete rewrite)
 
-### 2. **backend/bmi_monitor/settings.py**
-   - **SECRET_KEY**: Now read from `SECRET_KEY` env var (Render auto-generates)
-   - **DEBUG**: Now controlled by `DEBUG` env var (set to `False` in production)
-   - **ALLOWED_HOSTS**: Dynamically built from `ALLOWED_HOSTS` env var
-   - **DATABASES**: 
-     - Uses SQLite locally (default)
-     - Switches to PostgreSQL when `DATABASE_URL` env var is present
-   - **MIDDLEWARE**: Added `whitenoise.middleware.WhiteNoiseMiddleware` for static file serving
-   - **STATIC_ROOT**: Added for production static file handling
-   - **STATICFILES_STORAGE**: Using WhiteNoise's compressed manifest storage
-   - **CORS_ALLOWED_ORIGINS**: Dynamically from env var (supports comma-separated list)
-   - **Security settings**: Added HTTPS redirect, secure cookies, and CSP headers for production
+- Added Frontend service (React/Nginx) on separate URL
+- Added PostgreSQL database service (`ifugao-bmi-db`)
+- Backend now includes:
+  - `startCommand` with migrations and collectstatic
+  - Health check path
+  - Environment variables for production
+- Frontend uses `fromService` reference to automatically link to backend URL
+- All services set to `plan: free` for Render's free tier
 
-### 3. **backend/requirements.txt**
-   - ✅ Added `whitenoise==6.6.0` - for serving static files in production
-   - ✅ Added `dj-database-url==2.1.0` - for parsing DATABASE_URL
-   - ✅ Added `psycopg2-binary==2.9.9` - PostgreSQL driver for Django
+### 2. backend/bmi_monitor/settings.py
 
-### 4. **frontend/Dockerfile**
-   - Added `ARG VITE_API_URL` build argument
-   - Frontend build now accepts API URL from Render (defaults to localhost:8000 for local dev)
-   - Added `nginx.conf` copy for production Nginx configuration
-   - Nginx configured with proper caching, gzip, and SPA routing
+- **SECRET_KEY**: Now read from `SECRET_KEY` env var (Render auto-generates)
+- **DEBUG**: Now controlled by `DEBUG` env var (set to `False` in production)
+- **ALLOWED_HOSTS**: Dynamically built from `ALLOWED_HOSTS` env var
+- **DATABASES**:
+  - Uses SQLite locally (default)
+  - Switches to PostgreSQL when `DATABASE_URL` env var is present
+- **MIDDLEWARE**: Added `whitenoise.middleware.WhiteNoiseMiddleware` for static file serving
+- **STATIC_ROOT**: Added for production static file handling
+- **STATICFILES_STORAGE**: Using WhiteNoise's compressed manifest storage
+- **CORS_ALLOWED_ORIGINS**: Dynamically from env var (supports comma-separated list)
+- **Security settings**: Added HTTPS redirect, secure cookies, and CSP headers for production
 
-### 5. **frontend/nginx.conf** (New file)
-   - ✅ Gzip compression enabled
-   - ✅ Smart caching for assets (30 days) vs HTML (1 day)
-   - ✅ Client-side routing support (all non-file requests → index.html)
-   - ✅ Optional API proxy (commented out, can be enabled if needed)
+### 3. backend/requirements.txt
 
-### 6. **backend/.env.example** (New file)
-   - Environment variable reference for backend deployment
-   - Includes all configuration options with descriptions
+- ✅ Added `whitenoise==6.6.0` - for serving static files in production
+- ✅ Added `dj-database-url==2.1.0` - for parsing DATABASE_URL
+- ✅ Added `psycopg2-binary==2.9.9` - PostgreSQL driver for Django
 
-### 7. **frontend/.env.example** (New file)
-   - Environment variable reference for frontend deployment
-   - Shows how VITE_API_URL is used
+### 4. frontend/Dockerfile
 
-### 8. **DEPLOYMENT.md** (New file)
-   - Comprehensive deployment guide
-   - Local development setup
-   - Step-by-step Render deployment
-   - Admin account creation instructions
-   - Troubleshooting guide
-   - Monitoring and backup strategies
+- Added `ARG VITE_API_URL` build argument
+- Frontend build now accepts API URL from Render (defaults to localhost:8000 for local dev)
+- Added `nginx.conf` copy for production Nginx configuration
+- Nginx configured with proper caching, gzip, and SPA routing
+
+### 5. frontend/nginx.conf (New file)
+
+- ✅ Gzip compression enabled
+- ✅ Smart caching for assets (30 days) vs HTML (1 day)
+- ✅ Client-side routing support (all non-file requests → index.html)
+- ✅ Optional API proxy (commented out, can be enabled if needed)
+
+### 6. backend/.env.example (New file)
+
+- Environment variable reference for backend deployment
+- Includes all configuration options with descriptions
+
+### 7. frontend/.env.example (New file)
+
+- Environment variable reference for frontend deployment
+- Shows how VITE_API_URL is used
+
+### 8. DEPLOYMENT.md (New file)
+
+- Comprehensive deployment guide
+- Local development setup
+- Step-by-step Render deployment
+- Admin account creation instructions
+- Troubleshooting guide
+- Monitoring and backup strategies
 
 ## How Render Deployment Works
 
@@ -66,7 +74,7 @@
    - Frontend: React SPA served by Nginx (~5-10 min build)
    - Backend: Django API with Gunicorn (~3-5 min build)
    - Database: PostgreSQL (auto-provisioned)
-4. **Environment Variables**: 
+4. **Environment Variables**:
    - Render generates `SECRET_KEY` automatically
    - `DATABASE_URL` is auto-set from postgres service
    - Frontend `VITE_API_URL` is auto-populated from backend service URL
@@ -122,7 +130,7 @@ Visit: `http://localhost:5173` → backend at `http://localhost:8000`
 
 ```
 ┌─────────────────────┐
-│  Browser/User      │
+│  Browser/User       │
 └──────────┬──────────┘
            │
            ▼
@@ -147,8 +155,6 @@ Visit: `http://localhost:5173` → backend at `http://localhost:8000`
 │  (ifugao_bmi_prod)           │
 └──────────────────────────────┘
 ```
-
----
 
 ## Questions or Issues?
 

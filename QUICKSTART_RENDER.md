@@ -24,7 +24,7 @@ Render will show you the services it will create:
 
 ```
 ✓ Ifugao BMI Frontend (Nginx React app)
-✓ Ifugao BMI Backend (Django API + Gunicorn)  
+✓ Ifugao BMI Backend (Django API + Gunicorn)
 ✓ ifugao-bmi-db (PostgreSQL)
 ```
 
@@ -33,6 +33,7 @@ Review the environment variables, then click **"Create"**.
 ## 4️⃣ Wait for Deployment
 
 Typical timeline:
+
 - Database: **1-2 minutes** (PostgreSQL provisioning)
 - Backend: **5-10 minutes** (build, migrate, collect static)
 - Frontend: **5-10 minutes** (npm install, npm run build)
@@ -44,33 +45,41 @@ Monitor logs in the Render dashboard. Each service shows its build/start logs.
 Once all three services show "Live":
 
 1. **Backend Health Check**
-   ```
-   GET https://<your-backend>.onrender.com/api/admin/login/
-   ```
-   Should return `405 Method Not Allowed` (POST only) - this is OK!
+
+```
+GET https://<your-backend>.onrender.com/api/admin/login/
+```
+
+Should return `405 Method Not Allowed` (POST only) - this is OK!
 
 2. **Frontend Loads**
-   ```
-   https://<your-frontend>.onrender.com
-   ```
-   Should show login page
+
+```
+https://<your-frontend>.onrender.com
+```
+
+Should show login page
 
 3. **Check Logs** for any errors:
-   - Backend: Look for migration errors
-   - Frontend: Look for build or startup errors
-   - Database: Connection errors
+
+- Backend: Look for migration errors
+- Frontend: Look for build or startup errors
+- Database: Connection errors
 
 ## 6️⃣ Create Admin Account
 
 ### Option A: Via Render Shell (Easiest)
 
 In Render dashboard:
+
 1. Go to **Ifugao BMI Backend** service
 2. Click **"Shell"** tab
 3. Run:
-   ```bash
-   python create_admin.py
-   ```
+
+```bash
+python create_admin.py
+```
+
 4. Follow prompts to create admin account
 
 ### Option B: Via Management Command
@@ -83,6 +92,7 @@ python manage.py createsuperuser
 ## 7️⃣ Test the App
 
 ### Personnel Flow
+
 1. Go to frontend URL
 2. Click "Signup"
    - Fill form with personnel details
@@ -95,6 +105,7 @@ python manage.py createsuperuser
    - See BMI results with recommendations
 
 ### Admin Flow
+
 1. Go to frontend URL
 2. Click "Admin Login"
    - First login will force password change
@@ -107,6 +118,7 @@ python manage.py createsuperuser
 ## 8️⃣ Monitor Production
 
 ### View Logs
+
 - Render Dashboard → Service → Logs tab
 - Follow in real-time for errors
 
