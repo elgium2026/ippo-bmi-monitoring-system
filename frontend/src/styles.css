@@ -122,6 +122,7 @@ small {
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 2200px;
 }
 
 table th,
@@ -129,10 +130,17 @@ table td {
   padding: 12px 10px;
   border-bottom: 1px solid #e5e7eb;
   text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
 }
 
 table th {
   background: #f8fafc;
+}
+
+.remarks-cell {
+  min-width: 280px;
+  white-space: normal;
 }
 
 action-menu {

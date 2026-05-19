@@ -1,6 +1,33 @@
 import { useEffect, useState } from 'react'
 import { fetchPersonnel, updatePersonnel, deletePersonnel, exportPersonnel } from '../api.js'
 
+const reportColumns = [
+  { label: 'UNIT', value: user => (user.unit === 'Other Units (Please Specify)' ? user.unit_other : user.unit) },
+  { label: 'RANK', value: user => user.rank },
+  { label: 'LAST NAME', value: user => user.last_name },
+  { label: 'FIRST NAME', value: user => user.first_name },
+  { label: 'MIDDLE NAME', value: user => user.middle_name },
+  { label: 'QLFR', value: user => user.qualifier },
+  { label: 'BIRTHDATE', value: user => user.birthdate },
+  { label: 'AGE', value: user => user.age },
+  { label: 'SEX', value: user => user.sex },
+  { label: 'WEIGHT (kg)', value: user => user.weight_kg },
+  { label: 'HEIGHT (cm)', value: user => user.height_cm },
+  { label: 'WAIST (cm)', value: user => user.waist_cm },
+  { label: 'HIP (cm)', value: user => user.hip_cm },
+  { label: 'WRIST (cm)', value: user => user.wrist_cm },
+  { label: 'BMI', value: user => user.bmi },
+  { label: 'PNP BMI ACCEPTABLE STANDARD', value: user => user.pnp_bmi_classification },
+  { label: 'WHO STANDARD', value: user => user.who_bmi_classification },
+  { label: 'Weight to Lose (Kg)', value: user => user.weight_to_lose },
+  { label: 'Normal Weight (Kg)', value: user => user.max_normal_weight },
+  { label: 'REMARKS', value: user => user.remarks, className: 'remarks-cell' },
+]
+
+function displayValue(value) {
+  return value === null || value === undefined || value === '' ? '-' : value
+}
+
 export default function AdminDashboard({ admin, token, onLogout }) {
   const [personnel, setPersonnel] = useState([])
   const [selected, setSelected] = useState(null)
@@ -106,28 +133,20 @@ export default function AdminDashboard({ admin, token, onLogout }) {
         <table>
           <thead>
             <tr>
-              <th>UNIT</th>
-              <th>RANK</th>
-              <th>LAST NAME</th>
-              <th>FIRST NAME</th>
-              <th>MIDDLE NAME</th>
-              <th>AGE</th>
-              <th>SEX</th>
-              <th>BMI</th>
+              {reportColumns.map(column => (
+                <th key={column.label}>{column.label}</th>
+              ))}
               <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
             {personnel.map(user => (
               <tr key={user.id}>
-                <td>{user.unit === 'Other Units (Please Specify)' ? user.unit_other : user.unit}</td>
-                <td>{user.rank}</td>
-                <td>{user.last_name}</td>
-                <td>{user.first_name}</td>
-                <td>{user.middle_name}</td>
-                <td>{user.age ?? '-'}</td>
-                <td>{user.sex}</td>
-                <td>{user.bmi ?? '-'}</td>
+                {reportColumns.map(column => (
+                  <td key={column.label} className={column.className || ''}>
+                    {displayValue(column.value(user))}
+                  </td>
+                ))}
                 <td>
                   <button onClick={() => handleSelect(user)}>Edit</button>
                   <button onClick={() => handleDelete(user.id)} style={{ marginLeft: 8 }}>Delete</button>
