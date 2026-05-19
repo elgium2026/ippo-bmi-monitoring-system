@@ -11,7 +11,19 @@ function App() {
   const storedAdmin = JSON.parse(window.localStorage.getItem('admin') || 'null')
   const storedAdminToken = window.localStorage.getItem('adminToken') || ''
 
-  const [view, setView] = useState('login')
+  const parseHash = () => {
+    const hash = window.location.hash.replace('#/', '').replace('#', '')
+    if (['login', 'signup', 'admin-login'].includes(hash)) {
+      return hash
+    }
+    return null
+  }
+
+  const [view, setView] = useState(() => {
+    if (storedPersonnel) return 'dashboard'
+    if (storedAdmin) return 'admin-dashboard'
+    return parseHash() || 'login'
+  })
   const [personnel, setPersonnel] = useState(storedPersonnel)
   const [personnelToken, setPersonnelToken] = useState(storedPersonnelToken)
   const [admin, setAdmin] = useState(storedAdmin)
@@ -20,10 +32,41 @@ function App() {
   useEffect(() => {
     if (personnel) {
       setView('dashboard')
-    } else if (admin) {
-      setView('admin-dashboard')
+      return
     }
-  }, [])
+    if (admin) {
+      setView('admin-dashboard')
+      return
+    }
+
+    const hashView = parseHash()
+    if (hashView) {
+      setView(hashView)
+      return
+    }
+
+    if (!window.location.hash) {
+      window.location.hash = '#/login'
+    }
+  }, [personnel, admin])
+
+  useEffect(() => {
+    if (!personnel && !admin && ['login', 'signup', 'admin-login'].includes(view)) {
+      window.location.hash = `#/${view}`
+    }
+  }, [view, personnel, admin])
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (personnel || admin) return
+      const hashView = parseHash()
+      if (hashView) {
+        setView(hashView)
+      }
+    }
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [personnel, admin])
 
   const loginPersonnel = data => {
     setPersonnel(data.user)
