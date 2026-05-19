@@ -1,6 +1,7 @@
 services:
   - type: web
     name: Ifugao BMI Frontend
+    repo: https://github.com/elgium2026/ippo-bmi-monitoring-system
     runtime: docker
     rootDir: frontend
     dockerfilePath: Dockerfile
@@ -14,6 +15,7 @@ services:
 
   - type: web
     name: Ifugao BMI Backend
+    repo: https://github.com/elgium2026/ippo-bmi-monitoring-system
     runtime: docker
     rootDir: backend
     dockerfilePath: Dockerfile
