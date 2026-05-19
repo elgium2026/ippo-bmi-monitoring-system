@@ -67,7 +67,7 @@ class CustomUser(AbstractUser):
             return None
         if bmi <= 18.5:
             return 'UNDERWEIGHT'
-        if bmi <= 24.9:
+        if bmi <= 25:
             return 'NORMAL'
         if bmi <= 26:
             return 'ACCEPTABLE BMI'
@@ -86,7 +86,7 @@ class CustomUser(AbstractUser):
             return None
         if bmi < 18.5:
             return 'UNDERWEIGHT'
-        if bmi < 25:
+        if bmi <= 25:
             return 'NORMAL'
         if bmi < 30:
             return 'OVERWEIGHT'
