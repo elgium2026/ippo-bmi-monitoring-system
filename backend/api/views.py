@@ -21,6 +21,7 @@ from .serializers import (
     AdminPasswordChangeSerializer,
     PersonnelUpdateSerializer,
     AdminPersonnelUpdateSerializer,
+    LoginHistorySerializer,
 )
 
 
@@ -187,6 +188,28 @@ class AdminPersonnelDetailView(APIView):
         user.delete()
         create_login_history(request.user.username, f'Admin deleted personnel {username}', True, request.user)
         return Response({'message': 'Personnel deleted successfully.'})
+
+class AdminPersonnelPasswordResetView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request, pk):
+        user = get_object_or_404(CustomUser, pk=pk, is_personnel=True)
+        serializer = AdminPasswordChangeSerializer(data=request.data)
+        if serializer.is_valid():
+            user.set_password(serializer.validated_data['password'])
+            user.must_change_password = False
+            user.save()
+            create_login_history(request.user.username, f'Admin reset password for personnel {user.username}', True, request.user)
+            return Response({'message': f'Password reset successfully for {user.username}.'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AdminLoginHistoryView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        history = LoginHistory.objects.all()[:500]
+        serializer = LoginHistorySerializer(history, many=True)
+        return Response(serializer.data)
 
 class AdminExportView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]

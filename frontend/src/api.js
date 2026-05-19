@@ -48,8 +48,16 @@ export function fetchPersonnel(token) {
   return request('/admin/personnel/', { headers: { Authorization: `Bearer ${token}` } })
 }
 
+export function fetchLoginHistory(token) {
+  return request('/admin/login-history/', { headers: { Authorization: `Bearer ${token}` } })
+}
+
 export function updatePersonnel(id, data, token) {
   return request(`/admin/personnel/${id}/`, { method: 'PUT', body: JSON.stringify(data), headers: { Authorization: `Bearer ${token}` } })
+}
+
+export function resetPersonnelPassword(id, data, token) {
+  return request(`/admin/personnel/${id}/reset-password/`, { method: 'POST', body: JSON.stringify(data), headers: { Authorization: `Bearer ${token}` } })
 }
 
 export function deletePersonnel(id, token) {

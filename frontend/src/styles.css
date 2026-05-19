@@ -122,7 +122,6 @@ small {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 2200px;
 }
 
 table th,
@@ -136,6 +135,14 @@ table td {
 
 table th {
   background: #f8fafc;
+}
+
+.report-table {
+  min-width: 2200px;
+}
+
+.history-table {
+  min-width: 780px;
 }
 
 .remarks-cell {

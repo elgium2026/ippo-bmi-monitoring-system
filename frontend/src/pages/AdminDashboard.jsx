@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react'
-import { fetchPersonnel, updatePersonnel, deletePersonnel, exportPersonnel } from '../api.js'
+import {
+  fetchPersonnel,
+  fetchLoginHistory,
+  updatePersonnel,
+  resetPersonnelPassword,
+  deletePersonnel,
+  exportPersonnel,
+} from '../api.js'
 
 const reportColumns = [
   { label: 'UNIT', value: user => (user.unit === 'Other Units (Please Specify)' ? user.unit_other : user.unit) },
@@ -28,14 +35,32 @@ function displayValue(value) {
   return value === null || value === undefined || value === '' ? '-' : value
 }
 
+function formatTimestamp(value) {
+  if (!value) return '-'
+  return new Date(value).toLocaleString()
+}
+
+function getErrorMessage(error, fallback) {
+  if (error.detail) return error.detail
+  const firstField = Object.keys(error)[0]
+  const firstValue = firstField ? error[firstField] : null
+  if (Array.isArray(firstValue)) return `${firstField}: ${firstValue[0]}`
+  if (typeof firstValue === 'string') return `${firstField}: ${firstValue}`
+  return fallback
+}
+
 export default function AdminDashboard({ admin, token, onLogout }) {
   const [personnel, setPersonnel] = useState([])
+  const [history, setHistory] = useState([])
   const [selected, setSelected] = useState(null)
+  const [resetUser, setResetUser] = useState(null)
+  const [resetForm, setResetForm] = useState({ password: '', confirm_password: '' })
   const [form, setForm] = useState({})
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
     loadPersonnel()
+    loadHistory()
   }, [])
 
   const loadPersonnel = async () => {
@@ -44,6 +69,15 @@ export default function AdminDashboard({ admin, token, onLogout }) {
       setPersonnel(data)
     } catch (error) {
       setStatus({ type: 'error', message: error.detail || 'Could not load personnel records.' })
+    }
+  }
+
+  const loadHistory = async () => {
+    try {
+      const data = await fetchLoginHistory(token)
+      setHistory(data)
+    } catch (error) {
+      setStatus({ type: 'error', message: getErrorMessage(error, 'Could not load access log history.') })
     }
   }
 
@@ -73,6 +107,11 @@ export default function AdminDashboard({ admin, token, onLogout }) {
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
+  const handleResetChange = e => {
+    const { name, value } = e.target
+    setResetForm(prev => ({ ...prev, [name]: value }))
+  }
+
   const handleUpdate = async event => {
     event.preventDefault()
     if (!selected) return
@@ -81,8 +120,28 @@ export default function AdminDashboard({ admin, token, onLogout }) {
       setStatus({ type: 'success', message: 'Personnel updated successfully.' })
       setSelected(null)
       loadPersonnel()
+      loadHistory()
     } catch (error) {
-      setStatus({ type: 'error', message: error.detail || 'Could not update personnel.' })
+      setStatus({ type: 'error', message: getErrorMessage(error, 'Could not update personnel.') })
+    }
+  }
+
+  const handleResetSelect = user => {
+    setResetUser(user)
+    setResetForm({ password: '', confirm_password: '' })
+  }
+
+  const handleResetPassword = async event => {
+    event.preventDefault()
+    if (!resetUser) return
+    try {
+      const response = await resetPersonnelPassword(resetUser.id, resetForm, token)
+      setStatus({ type: 'success', message: response.message })
+      setResetUser(null)
+      setResetForm({ password: '', confirm_password: '' })
+      loadHistory()
+    } catch (error) {
+      setStatus({ type: 'error', message: getErrorMessage(error, 'Could not reset personnel password.') })
     }
   }
 
@@ -92,9 +151,11 @@ export default function AdminDashboard({ admin, token, onLogout }) {
       await deletePersonnel(id, token)
       setStatus({ type: 'success', message: 'Personnel record deleted.' })
       if (selected && selected.id === id) setSelected(null)
+      if (resetUser && resetUser.id === id) setResetUser(null)
       loadPersonnel()
+      loadHistory()
     } catch (error) {
-      setStatus({ type: 'error', message: error.detail || 'Could not delete personnel.' })
+      setStatus({ type: 'error', message: getErrorMessage(error, 'Could not delete personnel.') })
     }
   }
 
@@ -130,7 +191,7 @@ export default function AdminDashboard({ admin, token, onLogout }) {
       {status && <div className={`notice ${status.type}`}>{status.message}</div>}
 
       <div className="table-wrapper card" style={{ marginBottom: 24 }}>
-        <table>
+        <table className="report-table">
           <thead>
             <tr>
               {reportColumns.map(column => (
@@ -149,6 +210,7 @@ export default function AdminDashboard({ admin, token, onLogout }) {
                 ))}
                 <td>
                   <button onClick={() => handleSelect(user)}>Edit</button>
+                  <button onClick={() => handleResetSelect(user)} style={{ marginLeft: 8 }}>Reset Password</button>
                   <button onClick={() => handleDelete(user.id)} style={{ marginLeft: 8 }}>Delete</button>
                 </td>
               </tr>
@@ -157,8 +219,32 @@ export default function AdminDashboard({ admin, token, onLogout }) {
         </table>
       </div>
 
+      {resetUser && (
+        <div className="card" style={{ marginBottom: 24 }}>
+          <h3>Reset Personnel Password</h3>
+          <p>{resetUser.rank} {resetUser.first_name} {resetUser.last_name} ({resetUser.username})</p>
+          <form onSubmit={handleResetPassword}>
+            <div className="grid">
+              <div>
+                <label>New Password</label>
+                <input type="password" name="password" value={resetForm.password} onChange={handleResetChange} />
+              </div>
+              <div>
+                <label>Confirm New Password</label>
+                <input type="password" name="confirm_password" value={resetForm.confirm_password} onChange={handleResetChange} />
+              </div>
+            </div>
+            <small>Min 8 chars, alphanumeric, 1 uppercase, 2 lowercase, at least 1 digit.</small>
+            <div style={{ marginTop: 16 }}>
+              <button className="primary" type="submit">Reset Password</button>
+              <button type="button" onClick={() => setResetUser(null)} style={{ marginLeft: 12 }}>Cancel</button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {selected && (
-        <div className="card">
+        <div className="card" style={{ marginBottom: 24 }}>
           <h3>Edit Personnel</h3>
           <form onSubmit={handleUpdate}>
             <div className="grid">
@@ -235,6 +321,30 @@ export default function AdminDashboard({ admin, token, onLogout }) {
           </form>
         </div>
       )}
+
+      <div className="table-wrapper card">
+        <h3>Access Log History</h3>
+        <table className="history-table">
+          <thead>
+            <tr>
+              <th>DATE/TIME</th>
+              <th>USERNAME</th>
+              <th>ACTION</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {history.map(item => (
+              <tr key={item.id}>
+                <td>{formatTimestamp(item.timestamp)}</td>
+                <td>{displayValue(item.username)}</td>
+                <td>{displayValue(item.action)}</td>
+                <td>{item.success ? 'SUCCESS' : 'FAILED'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

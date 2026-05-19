@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, LoginHistory
 from .validators import validate_personnel_password
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -112,3 +112,8 @@ class AdminPersonnelUpdateSerializer(serializers.ModelSerializer):
             'last_name', 'qualifier', 'birthdate', 'unit', 'unit_other', 'sex',
             'weight_kg', 'height_cm', 'waist_cm', 'hip_cm', 'wrist_cm',
         ]
+
+class LoginHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LoginHistory
+        fields = ['id', 'username', 'action', 'success', 'timestamp']
