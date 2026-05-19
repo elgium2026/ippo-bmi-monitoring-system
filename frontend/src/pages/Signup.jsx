@@ -54,7 +54,8 @@ export default function Signup({ onSignup }) {
         setTimeout(onSignup, 800)
       }
     } catch (error) {
-      setStatus({ type: 'error', message: error.detail || 'Could not complete signup.' })
+      const message = error?.message || 'Could not complete signup.'
+      setStatus({ type: 'error', message })
     }
   }
 

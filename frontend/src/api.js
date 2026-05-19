@@ -1,5 +1,24 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
+function getErrorMessage(errorData) {
+  if (!errorData) return 'Server error.'
+  if (typeof errorData === 'string') return errorData
+  if (typeof errorData.detail === 'string') return errorData.detail
+  if (typeof errorData.message === 'string') return errorData.message
+  if (typeof errorData === 'object') {
+    for (const key of Object.keys(errorData)) {
+      const value = errorData[key]
+      if (Array.isArray(value)) {
+        return `${key}: ${value.join(', ')}`
+      }
+      if (typeof value === 'string') {
+        return `${key}: ${value}`
+      }
+    }
+  }
+  return 'Server error.'
+}
+
 async function request(path, options = {}) {
   const { headers, ...fetchOptions } = options
   const response = await fetch(`${API_URL}${path}`, {
@@ -10,8 +29,11 @@ async function request(path, options = {}) {
     },
   })
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ detail: 'Server error' }))
-    throw errorData
+    const errorData = await response.json().catch(() => ({ detail: 'Server error.' }))
+    const message = getErrorMessage(errorData)
+    const error = new Error(message)
+    error.data = errorData
+    throw error
   }
   return response.json()
 }
