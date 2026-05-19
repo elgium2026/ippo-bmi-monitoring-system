@@ -1,12 +1,13 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 async function request(path, options = {}) {
+  const { headers, ...fetchOptions } = options
   const response = await fetch(`${API_URL}${path}`, {
+    ...fetchOptions,
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...headers,
     },
-    ...options,
   })
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ detail: 'Server error' }))
